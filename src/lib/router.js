@@ -14,7 +14,6 @@ class Router {
         this.app.post("/access_key", this.validateAccessKey.bind(this));
 
         this.test_appid = new RegExp('^[A-Z0-9]{50,}$')
-        this.test_secret = new RegExp('^[A-Za-z0-9]{75,}$');
     }
 
     async validateAccessKey(req, res) {
@@ -36,6 +35,10 @@ class Router {
                 return;
             }
             const app_id = arr[0];
+            if (!this.test_appid.test(app_id)) {
+                res.status(400).send("Bad Input");
+                return;
+            }
             const hash = arr[1];
 
             const secrets = await this.dbconn.getSecrets(app_id);

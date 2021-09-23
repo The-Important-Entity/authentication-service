@@ -15,8 +15,13 @@ class DBConnector {
     }
 
     async getSecrets(app_id){
-        const response = await this.client.query("select secret from organization.access_keys where organization.access_keys.app_id=$1", [app_id]);
-        return response.rows;
+        try {
+            const response = await this.client.query("SELECT secret FROM organization.access_keys WHERE organization.access_keys.app_id=$1", [app_id]);
+            return response.rows;
+        }
+        catch(err) {
+            return [];
+        }
     }
 
     close(){
