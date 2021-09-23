@@ -25,7 +25,7 @@ class DBConnector {
     }
 
     close(){
-        this.client.close();
+        this.client.end();
     }
 }
 

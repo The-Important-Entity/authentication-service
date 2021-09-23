@@ -64,7 +64,7 @@ class Router {
         }
     }
 
-    async start() {
+    start() {
         try {
             this.server = this.app.listen(this.port, function(){
                 console.log("Auth Service listening on port " + this.port.toString());
@@ -75,9 +75,10 @@ class Router {
         }
     }
 
-    async stop(){
+    stop(){
         try {
             this.server.close();
+            this.dbconn.close();
         }
         catch(err) {
             throw err;
