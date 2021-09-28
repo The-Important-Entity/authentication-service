@@ -1,6 +1,6 @@
 'use strict';
 const express = require("express");
-const DBConnector = require("./dbconnector");
+const Requester = require("./Requester");
 const crypto = require("crypto")
 
 class Router {
@@ -9,7 +9,7 @@ class Router {
         this.app.use(express.json());
         this.app.use(express.urlencoded({extended: false}));
         this.port = config.PORT;
-        this.dbconn = new DBConnector(config.HOST, config.DB_PORT, config.DB_USER, config.DB_PASS, config.DB);
+        this.requester = new Requester(config.DB_SERVICE);
 
         this.app.post("/access_key", this.validateAccessKey.bind(this));
 
@@ -19,12 +19,13 @@ class Router {
     async validateAccessKey(req, res) {
         try {
             const auth_token = req.body.auth_token;
+            const namespace = req.body.namespace;
             const method = req.body.method;
             const url = req.body.url;
             const date = req.body.date;
             const nonce = req.body.nonce;
 
-            if (!auth_token || !method || !url || !date || !nonce){
+            if (!auth_token || !method || !url || !date || !nonce || !namespace){
                 res.status(400).send("Bad Input");
                 return;
             }
@@ -41,7 +42,7 @@ class Router {
             }
             const hash = arr[1];
 
-            const secrets = await this.dbconn.getSecrets(app_id);
+            const secrets = await this.requester.getSecrets(app_id, namespace);
             if (!secrets || secrets.length == 0) {
                 res.status(200).send("Unauthorized");
                 return;
