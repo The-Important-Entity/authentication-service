@@ -43,6 +43,7 @@ class Router {
             const hash = arr[1];
 
             const secrets = await this.requester.getSecrets(app_id, namespace);
+            console.log(secrets);
             if (!secrets || secrets.length == 0) {
                 res.status(200).send("Unauthorized");
                 return;

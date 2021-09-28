@@ -8,7 +8,7 @@ class Requester {
 
     async getSecrets(app_id, namespace) {
         try {
-            const response = axios.post(this.url + "/secret_key", {
+            const response = await axios.post(this.url + "/secret_key", {
                 "app_id": app_id,
                 "namespace": namespace
             });
