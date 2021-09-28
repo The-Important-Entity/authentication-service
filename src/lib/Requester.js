@@ -12,6 +12,7 @@ class Requester {
                 "app_id": app_id,
                 "namespace": namespace
             });
+            return response.data
         }
         catch(err) {
             return [];
