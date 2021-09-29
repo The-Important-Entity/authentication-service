@@ -25,8 +25,8 @@ class Router {
 
         this.test_appid = new RegExp('^[A-Z0-9]{50,}$');
 
-        this.private = fs.readFileSync(path.join(__dirname, "../../private.key", 'utf8'));
-        this.public = fs.readFileSync(path.join(__dirname, "../../public.key", 'utf8'));
+        this.private = fs.readFileSync(path.join(__dirname, "../../private.key"), 'utf8');
+        this.public = fs.readFileSync(path.join(__dirname, "../../public.key"), 'utf8');
 
         this.jwtSignOptions = {
             expiresIn:  "12h",
