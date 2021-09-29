@@ -20,7 +20,7 @@ class Router {
 
         this.app.post("/access_key", validateAccessKey.bind(this));
         this.app.post("/login", postLogin.bind(this));
-        this.app.post("/token", validateToken.bin(this));
+        this.app.post("/token", validateToken.bind(this));
 
         this.test_appid = new RegExp('^[A-Z0-9]{50,}$');
 
