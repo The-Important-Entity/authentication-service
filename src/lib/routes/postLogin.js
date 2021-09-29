@@ -15,7 +15,6 @@ const postLogin = async function(req, res) {
             return;
         }
         const org = organizations[0];
-        console.log(org);
         if (await this.bcrypt.compare(password, org.password)){
             // ACCESS GRANTED
             const payload = {

@@ -6,6 +6,7 @@ const validateAccessKey = require("./routes/validateAccessKey");
 const postLogin = require("./routes/postLogin");
 const validateToken = require("./routes/validateToken");
 const path = require("path");
+const fs = require("fs");
 
 class Router {
     constructor(config) {
@@ -24,8 +25,8 @@ class Router {
 
         this.test_appid = new RegExp('^[A-Z0-9]{50,}$');
 
-        this.private = path.join(__dirname, "../../private.key", 'utf8');
-        this.public = path.join(__dirname, "../../public.key", 'utf8');
+        this.private = fs.readFileSync(path.join(__dirname, "../../private.key", 'utf8'));
+        this.public = fs.readFileSync(path.join(__dirname, "../../public.key", 'utf8'));
 
         this.jwtSignOptions = {
             expiresIn:  "12h",
