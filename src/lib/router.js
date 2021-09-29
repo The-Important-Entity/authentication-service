@@ -1,7 +1,11 @@
 'use strict';
 const express = require("express");
 const Requester = require("./Requester");
-const crypto = require("crypto")
+
+const validateAccessKey = require("./routes/validateAccessKey");
+const postLogin = require("./routes/postLogin");
+const validateToken = require("./routes/validateToken");
+const path = require("path");
 
 class Router {
     constructor(config) {
@@ -10,60 +14,23 @@ class Router {
         this.app.use(express.urlencoded({extended: false}));
         this.port = config.PORT;
         this.requester = new Requester(config.DB_SERVICE);
+        this.crypto = require("crypto");
+        this.jwt = require("jsonwebtoken");
+        this.bcrypt = require("bcrypt");
 
-        this.app.post("/access_key", this.validateAccessKey.bind(this));
+        this.app.post("/access_key", validateAccessKey.bind(this));
+        this.app.post("/login", postLogin.bind(this));
+        this.app.post("/token", validateToken.bin(this));
 
-        this.test_appid = new RegExp('^[A-Z0-9]{50,}$')
-    }
+        this.test_appid = new RegExp('^[A-Z0-9]{50,}$');
 
-    async validateAccessKey(req, res) {
-        try {
-            const auth_token = req.body.auth_token;
-            const namespace = req.body.namespace;
-            const method = req.body.method;
-            const url = req.body.url;
-            const date = req.body.date;
-            const nonce = req.body.nonce;
+        this.private = path.join(__dirname, "../../private.key", 'utf8');
+        this.public = path.join(__dirname, "../../public.key", 'utf8');
 
-            if (!auth_token || !method || !url || !date || !nonce || !namespace){
-                res.status(400).send("Bad Input");
-                return;
-            }
-
-            const arr = auth_token.split(":");
-            if (arr.length != 2) {
-                res.status(400).send("Bad Input");
-                return;
-            }
-            const app_id = arr[0];
-            if (!this.test_appid.test(app_id)) {
-                res.status(400).send("Bad Input");
-                return;
-            }
-            const hash = arr[1];
-
-            const secrets = await this.requester.getSecrets(app_id, namespace);
-            console.log(secrets);
-            if (!secrets || secrets.length == 0) {
-                res.status(200).send("Unauthorized");
-                return;
-            }
-
-            for (var i = 0; i < secrets.length; i++){
-                const str = method + '\n' + url + '\n' + date + '\n' + nonce + '\n' + app_id
-                const new_hash = crypto.createHmac('sha256', secrets[i].secret).update(str).digest('hex');
-
-                if (new_hash == hash) {
-                    res.status(200).send("Authorized");
-                    return;
-                }
-            }
-            res.status(200).send("Unauthorized");
-        }
-        catch(err) {
-            console.log(err);
-            res.status(500).send("Internal Server Error");
-        }
+        this.jwtSignOptions = {
+            expiresIn:  "12h",
+            algorithm:  "RS256"
+        };
     }
 
     start() {

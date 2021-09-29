@@ -18,6 +18,16 @@ class Requester {
             return [];
         }
     }
+
+    async getOrganization(name) {
+        try {
+            const response = await axios.get(this.url + "/organization/" + name);
+            return response.data;
+        }
+        catch {
+            return [];
+        }
+    }
 }
 
 module.exports = Requester;
