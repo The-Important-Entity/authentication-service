@@ -27,8 +27,14 @@ const validateAccessKey = async function(req, res) {
         }
         const hash = arr[1];
 
-        const secrets = await this.requester.getSecrets(app_id, namespace);
-        console.log(secrets);
+        var secrets;
+        if (req.query && req.query.type == "postNamespace") {
+            secrets = await this.requester.getSecretsWithoutNamespace(app_id);
+        }
+        else {
+            secrets = await this.requester.getSecrets(app_id, namespace);
+        }
+
         if (!secrets || secrets.length == 0) {
             res.status(200).send("Unauthorized");
             return;

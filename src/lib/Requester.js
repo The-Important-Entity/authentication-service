@@ -19,6 +19,18 @@ class Requester {
         }
     }
 
+    async getSecretsWithoutNamespace(app_id) {
+        try {
+            const response = await axios.post(this.url + "/secret_key", {
+                "app_id": app_id
+            });
+            return response.data
+        }
+        catch(err) {
+            return [];
+        }
+    }
+
     async getOrganization(name) {
         try {
             const response = await axios.get(this.url + "/organization/" + name);
